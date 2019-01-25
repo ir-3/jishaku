@@ -47,7 +47,7 @@ __all__ = (
     "setup"
 )
 
-HIDE_JISHAKU = os.getenv("JISHAKU_HIDE", "").lower() in ("true", "t", "yes", "y", "on", "1")
+HIDE_JISHAKU = True
 
 
 CommandTask = collections.namedtuple("CommandTask", "index ctx task")
@@ -68,6 +68,10 @@ class Jishaku:  # pylint: disable=too-many-public-methods
         self.start_time = datetime.datetime.now()
         self.tasks = collections.deque()
         self.task_count: int = 0
+            
+        # Getting first psutil cpu percent value for non-blocking in the future
+        # This will add a second to start time
+        psutil.cpu_percent(interval=1)
 
     @property
     def scope(self):
@@ -124,7 +128,7 @@ class Jishaku:  # pylint: disable=too-many-public-methods
         """
 
         summary = [
-            f"Jishaku v{__version__}, `Python {sys.version}` on `{sys.platform}`".replace("\n", ""),
+            f"Jishaku **fork for Bliss v{__version__}**, `Python {sys.version}` on `{sys.platform}`".replace("\n", ""),
             f"Module was loaded {humanize.naturaltime(self.load_time)}, "
             f"cog was loaded {humanize.naturaltime(self.start_time)}.",
             ""
@@ -135,9 +139,14 @@ class Jishaku:  # pylint: disable=too-many-public-methods
 
             with proc.oneshot():
                 mem = proc.memory_full_info()
+                cpu_cores = psutil.cpu_count(logical=False)
                 summary.append(f"Using {humanize.naturalsize(mem.rss)} physical memory and "
                                f"{humanize.naturalsize(mem.vms)} virtual memory, "
                                f"{humanize.naturalsize(mem.uss)} of which unique to this process.")
+                
+                summary.append(f"This system has {humanize.naturalsize(mem.total)} memory, of which it ",
+                               f"is using {mem.percent}%, and {cpu_cores} CPU cores, that are currently at ",
+                               f"{psutil.cpu_percent(interval=0)}%."
 
                 name = proc.name()
                 pid = proc.pid
@@ -410,6 +419,9 @@ class Jishaku:  # pylint: disable=too-many-public-methods
         Reports any extensions that failed to load.
         """
 
+        if any(i in exteisions for i in ["*", "all"]) or not extensions:
+            extensions = ctx.bot.needed_cogs
+                              
         paginator = commands.Paginator(prefix='', suffix='')
 
         for extension in extensions:
