@@ -146,7 +146,7 @@ class Jishaku:  # pylint: disable=too-many-public-methods
                 
                 summary.append(f"This system has {humanize.naturalsize(mem.total)} memory, of which it ",
                                f"is using {mem.percent}%, and {cpu_cores} CPU cores, that are currently at ",
-                               f"{psutil.cpu_percent(interval=0)}%."
+                               f"{psutil.cpu_percent(interval=0)}%.")
 
                 name = proc.name()
                 pid = proc.pid
