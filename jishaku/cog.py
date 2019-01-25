@@ -421,7 +421,7 @@ class Jishaku:  # pylint: disable=too-many-public-methods
         Reports any extensions that failed to load.
         """
 
-        if any(i in exteisions for i in ["*", "all"]) or not extensions:
+        if any(i in extensions for i in ["*", "all"]) or not extensions:
             extensions = ctx.bot.needed_cogs
                               
         paginator = commands.Paginator(prefix='', suffix='')
