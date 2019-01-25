@@ -146,8 +146,8 @@ class Jishaku:  # pylint: disable=too-many-public-methods
                 
                 v_mem = psutil.virtual_memory()
                 
-                summary.append(f"This system has {humanize.naturalsize(v_mem.total)} memory, of which it ",
-                               f"is using {v_mem.percent}%, and {cpu_cores} CPU cores, that are currently at ",
+                summary.append(f"This system has {humanize.naturalsize(v_mem.total)} memory, of which it "
+                               f"is using {v_mem.percent}%, and {cpu_cores} CPU cores, that are currently at "
                                f"{psutil.cpu_percent(interval=0)}%.")
 
                 name = proc.name()
